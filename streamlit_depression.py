@@ -670,35 +670,34 @@ def set_custom_theme():
 
 # ================ NAVIGATION ================
 
-def show_navigation_menu():
-    """Menu de navigation dynamique et stylisé"""
-    with st.sidebar:
-        st.markdown("## 🧠 Dépression - Navigation")
-        st.markdown("Choisissez un outil :")
-        tool_choice = st.radio(...)
-        options = [
-            "🏠 Accueil",
-            "🔍 Exploration",
-            "🧠 Analyse ML",
-            "🤖 Prédiction par IA",
-            "📝 Test PHQ-9",
-            "📚 Documentation",
-            "🔒 RGPD & Droits",
-            "ℹ️ À propos"
-        ]
-        if 'tool_choice' not in st.session_state or st.session_state.tool_choice not in options:
-            st.session_state.tool_choice = "🏠 Accueil"
-        current_index = options.index(st.session_state.tool_choice)
-        tool_choice = st.radio(
-            "",
-            options,
-            label_visibility="collapsed",
-            index=current_index,
-            key="main_navigation"
-        )
-        if tool_choice != st.session_state.tool_choice:
-            st.session_state.tool_choice = tool_choice
-        return tool_choice
+with st.sidebar:
+    st.markdown("## 🧠 Dépression - Navigation")
+    st.markdown("Choisissez un outil :")
+    options = [
+        "🏠 Accueil",
+        "🔍 Exploration",
+        "🧠 Analyse ML",
+        "🤖 Prédiction par IA",
+        "📝 Test PHQ-9",
+        "📚 Documentation",
+        "🔒 RGPD & Droits",
+        "ℹ️ À propos"
+    ]
+    # Sécurisation de l'index
+    if 'tool_choice' not in st.session_state or st.session_state.tool_choice not in options:
+        st.session_state.tool_choice = options[0]
+    current_index = options.index(st.session_state.tool_choice)
+    tool_choice = st.radio(
+        "",
+        options,
+        label_visibility="collapsed",
+        index=current_index,
+        key="main_navigation"
+    )
+    if tool_choice != st.session_state.tool_choice:
+        st.session_state.tool_choice = tool_choice
+
+
 
 
 # ================ GESTION DES DATASETS ================
@@ -1171,25 +1170,21 @@ def show_home_page():
         {
             "title": "👥 Grand public",
             "description": "Auto-évaluation et information sur la dépression pour sensibiliser et orienter",
-            "icon": "👥",
             "color": "#3498db"
         },
         {
             "title": "⚕️ Professionnels de santé",
             "description": "Outil d'aide au dépistage et suivi des patients en pratique clinique",
-            "icon": "⚕️",
             "color": "#27ae60"
         },
         {
             "title": "🔬 Chercheurs",
             "description": "Données et analyses pour études épidémiologiques sur la santé mentale",
-            "icon": "🔬",
             "color": "#e74c3c"
         },
         {
             "title": "🏛️ Décideurs",
             "description": "Informations pour politiques de santé publique en santé mentale",
-            "icon": "🏛️",
             "color": "#9b59b6"
         }
     ]

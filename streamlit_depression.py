@@ -672,31 +672,33 @@ def set_custom_theme():
 
 def show_navigation_menu():
     """Menu de navigation dynamique et stylisé"""
-    st.markdown("## 🧠 Dépression - Navigation")
-    st.markdown("Choisissez un outil :")
-    options = [
-        "🏠 Accueil",
-        "🔍 Exploration",
-        "🧠 Analyse ML",
-        "🤖 Prédiction par IA",
-        "📝 Test PHQ-9",
-        "📚 Documentation",
-        "🔒 RGPD & Droits",
-        "ℹ️ À propos"
-    ]
-    if 'tool_choice' not in st.session_state or st.session_state.tool_choice not in options:
-        st.session_state.tool_choice = "🏠 Accueil"
-    current_index = options.index(st.session_state.tool_choice)
-    tool_choice = st.radio(
-        "",
-        options,
-        label_visibility="collapsed",
-        index=current_index,
-        key="main_navigation"
-    )
-    if tool_choice != st.session_state.tool_choice:
-        st.session_state.tool_choice = tool_choice
-    return tool_choice
+    with st.sidebar:
+        st.markdown("## 🧠 Dépression - Navigation")
+        st.markdown("Choisissez un outil :")
+        tool_choice = st.radio(...)
+        options = [
+            "🏠 Accueil",
+            "🔍 Exploration",
+            "🧠 Analyse ML",
+            "🤖 Prédiction par IA",
+            "📝 Test PHQ-9",
+            "📚 Documentation",
+            "🔒 RGPD & Droits",
+            "ℹ️ À propos"
+        ]
+        if 'tool_choice' not in st.session_state or st.session_state.tool_choice not in options:
+            st.session_state.tool_choice = "🏠 Accueil"
+        current_index = options.index(st.session_state.tool_choice)
+        tool_choice = st.radio(
+            "",
+            options,
+            label_visibility="collapsed",
+            index=current_index,
+            key="main_navigation"
+        )
+        if tool_choice != st.session_state.tool_choice:
+            st.session_state.tool_choice = tool_choice
+        return tool_choice
 
 
 # ================ GESTION DES DATASETS ================

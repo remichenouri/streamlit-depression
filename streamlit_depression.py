@@ -2892,7 +2892,7 @@ def show_documentation():
                 <h4 style="color: #2c3e50; margin-bottom: 10px;">🎬 {video['title']}</h4>
                 <p style="color: #6c757d; margin-bottom: 10px;">{video['description']}</p>
                 <p style="color: #6c757d; margin-bottom: 15px;"><strong>Durée:</strong> {video['duration']}</p>
-                <a href="{video['url']}" target="_blank" style="color: #ff4757; text-decoration: none; font-weight: bold;">
+                <a href="{video['url']}" target="_blank" style="color: #ff4757; text-decoration: none; font-weight: bold";>
                     🔗 Voir la vidéo
                 </a>
             </div>
@@ -3449,7 +3449,7 @@ def main():
             return
 
     # Navigation
-    tool_choice = show_navigation_menu()
+    tool_choice = st.session_state.get("tool_choice")
 
     # Gestion des pages
     if tool_choice == "🏠 Accueil":

@@ -380,6 +380,44 @@ def set_custom_theme():
             align-items: center !important;
             justify-content: center !important;
         }
+        :root {
+        --sidebar-width-collapsed: 60px !important;
+        --sidebar-width-expanded: 240px !important;
+        --sidebar-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        --depression-primary: #6c5ce7 !important;
+        --depression-secondary: #a29bfe !important;
+        }
+        [data-testid="stSidebar"] {
+            width: var(--sidebar-width-collapsed) !important;
+            min-width: var(--sidebar-width-collapsed) !important;
+            max-width: var(--sidebar-width-collapsed) !important;
+            transition: var(--sidebar-transition) !important;
+            overflow: hidden !important;
+        }
+        [data-testid="stSidebar"]:hover {
+            width: var(--sidebar-width-expanded) !important;
+            min-width: var(--sidebar-width-expanded) !important;
+            max-width: var(--sidebar-width-expanded) !important;
+            overflow-y: auto !important;
+        }
+        [data-testid="stSidebar"] .stRadio label {
+            display: flex !important;
+            align-items: center !important;
+            padding: 10px 6px !important;
+            border-radius: 8px !important;
+            transition: all 0.3s ease !important;
+            cursor: pointer !important;
+            background: transparent !important;
+        }
+        /* Icônes de navigation */
+        [data-testid="stSidebar"] .stRadio label:nth-child(1) span::before { content: "🏠" !important; }
+        [data-testid="stSidebar"] .stRadio label:nth-child(2) span::before { content: "🔍" !important; }
+        [data-testid="stSidebar"] .stRadio label:nth-child(3) span::before { content: "🧠" !important; }
+        [data-testid="stSidebar"] .stRadio label:nth-child(4) span::before { content: "🤖" !important; }
+        [data-testid="stSidebar"] .stRadio label:nth-child(5) span::before { content: "📝" !important; }
+        [data-testid="stSidebar"] .stRadio label:nth-child(6) span::before { content: "📚" !important; }
+        [data-testid="stSidebar"] .stRadio label:nth-child(7) span::before { content: "🔒" !important; }
+        [data-testid="stSidebar"] .stRadio label:nth-child(8) span::before { content: "ℹ️" !important; }
 
         [data-testid="stSidebar"] h2::before {
             content: "🧠" !important;

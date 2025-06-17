@@ -2101,7 +2101,8 @@ def show_phq9_test():
             
             # Préparation données et prédiction IA
             user_data = {
-                **{'Age': age, 'Gender': gender, …},
+                **{'Age': age, 'Gender': gender, 'Education': education, 'Employment': employment, 'Marital_Status': marital_status, 'Income_Level': income_level, 'Family_History': family_history },
+
                 **{f"PHQ{i}": responses[i-1] for i in range(1,10)}
             }
             user_df = pd.DataFrame([user_data])

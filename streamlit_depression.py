@@ -1166,7 +1166,7 @@ def show_home_page():
     # À qui s'adresse ce projet
     st.markdown("## 🎯 À qui s'adresse cet outil")
 
-   target_audiences = [
+    target_audiences = [
     {
         "icon": "👥",
         "title": "Grand public",

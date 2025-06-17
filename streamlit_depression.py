@@ -1982,7 +1982,6 @@ def show_phq9_test():
 
     with test_tabs[0]:
         st.subheader("📋 Questionnaire PHQ-9")
-
         st.markdown("""
         <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
             <p style="margin: 0; color: #6c757d; text-align: center;">
@@ -1991,126 +1990,58 @@ def show_phq9_test():
             </p>
         </div>
         """, unsafe_allow_html=True)
-
-        demo_col1, demo_col2 = st.columns(2)
-
-        with demo_col1:
-            age = st.number_input("Âge", min_value=18, max_value=100, value=30, key="user_age")
-
-            gender = st.selectbox(
-                "Genre",
-                options=["Female", "Male", "Other"],
-                key="user_gender"
-            )
-
-            education = st.selectbox(
-                "Niveau d'éducation",
-                options=["High School", "Bachelor", "Master", "PhD"],
-                key="user_education"
-            )
-
-            employment = st.selectbox(
-                "Statut professionnel",
-                options=["Employed", "Unemployed", "Student", "Retired"],
-                key="user_employment"
-            )
-
-        with demo_col2:
-            marital_status = st.selectbox(
-                "Statut marital",
-                options=["Single", "Married", "Divorced", "Widowed"],
-                key="user_marital"
-            )
-
-            income_level = st.selectbox(
-                "Niveau de revenus",
-                options=["Low", "Medium", "High"],
-                key="user_income"
-            )
-
-            family_history = st.selectbox(
-                "Antécédents familiaux de dépression",
-                options=["No", "Yes"],
-                key="user_family_history"
-            )
-
-            previous_treatment = st.selectbox(
-                "Traitement antérieur pour dépression",
-                options=["No", "Yes"],
-                key="user_previous_treatment"
-            )
-
-        # Sauvegarde des données démographiques
-        st.session_state.demographic_data = {
-            'Age': age,
-            'Gender': gender,
-            'Education': education,
-            'Employment': employment,
-            'Marital_Status': marital_status,
-            'Income_Level': income_level,
-            'Family_History': family_history,
-            'Previous_Treatment': previous_treatment
-        }
-
-        # Échelle de réponse
-        response_scale = {
-            0: "Jamais",
-            1: "Plusieurs jours",
-            2: "Plus de la moitié des jours",
-            3: "Presque tous les jours"
-        }
-
-        # Questions PHQ-9
-        for i in range(1, 10):
-            st.markdown(f"""
-            <div class="phq9-question">
-                <h4 style="color: #6c5ce7; margin-bottom: 10px;">Question {i}</h4>
-                <p style="font-size: 1.1rem; margin-bottom: 15px; color: #2c3e50;">
-                    {get_phq9_question_text(i)}
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-
-            # Options de réponse
-            response = st.radio(
-                f"Fréquence pour la question {i}:",
-                options=list(response_scale.keys()),
-                format_func=lambda x: f"{x} - {response_scale[x]}",
-                key=f"phq9_q{i}",
-                horizontal=True
-            )
-
-            # Mise à jour de la réponse
-            if i <= len(st.session_state.phq9_responses):
-                if len(st.session_state.phq9_responses) < i:
-                    st.session_state.phq9_responses.extend([0] * (i - len(st.session_state.phq9_responses)))
-                st.session_state.phq9_responses[i-1] = response
-
-            st.markdown("---")
-
+    
+        # Fusion données démographiques et PHQ-9 dans un formulaire
+        with st.form("profil_phq9_form"):
+            demo_col1, demo_col2 = st.columns(2)
+            with demo_col1:
+                age = st.number_input("Âge", 18, 100, 30, key="user_age")
+                gender = st.selectbox("Genre", ["Female","Male","Other"], key="user_gender")
+                education = st.selectbox("Niveau d'éducation", ["High School","Bachelor","Master","PhD"], key="user_education")
+                employment = st.selectbox("Statut professionnel", ["Employed","Unemployed","Student","Retired"], key="user_employment")
+            with demo_col2:
+                marital_status = st.selectbox("Statut marital", ["Single","Married","Divorced","Widowed"], key="user_marital")
+                income_level = st.selectbox("Niveau de revenus", ["Low","Medium","High"], key="user_income")
+                family_history = st.selectbox("Antécédents familiaux de dépression", ["No","Yes"], key="user_family_history")
+                previous_treatment = st.selectbox("Traitement antérieur pour dépression", ["No","Yes"], key="user_previous_treatment")
+    
+            # Échelle et boucle PHQ-9
+            response_scale = {0:"Jamais",1:"Plusieurs jours",2:"Plus de la moitié des jours",3:"Presque tous les jours"}
+            st.session_state.phq9_responses = []  # Initialisation
+            for i in range(1,10):
+                st.markdown(f"**Q{i}.** {get_phq9_question_text(i)}")
+                resp = st.radio("", options=list(response_scale), format_func=lambda x: f"{x} – {response_scale[x]}", key=f"phq9_q{i}", horizontal=True)
+                st.session_state.phq9_responses.append(resp)
+                st.markdown("---")
+    
+            # Bouton de validation
+            submitted = st.form_submit_button("Lancer la prédiction")
+    
+        # Bloc de traitement après soumission
         if submitted:
-            # Validation
-            responses = [st.session_state[f"phq{i}"] for i in range(1,10)]
-        if None in responses:
-            st.warning("Veuillez répondre à toutes les questions.")
-        else:
-            # Calcul score
-            score = sum(responses)
-            level, alert = classify_depression_level(score)
-            st.metric("Score PHQ-9", f"{score}/27", level)
-            
-            # Préparation données et prédiction IA
-            user_data = {
-                **{'Age': age, 'Gender': gender, 'Education': education, 'Employment': employment, 'Marital_Status': marital_status, 'Income_Level': income_level, 'Family_History': family_history },
-
-                **{f"PHQ{i}": responses[i-1] for i in range(1,10)}
-            }
-            user_df = pd.DataFrame([user_data])
-            proba = best_pipeline.predict_proba(user_df)[0][1] * 100
-            pred = best_pipeline.predict(user_df)[0]
-            # Affichage IA
-            st.metric("Probabilité IA", f"{proba:.1f}%")
-            st.metric("Prédiction IA", "Dépression" if pred==1 else "Pas de dépression")
+            responses = st.session_state.phq9_responses
+            if len(responses) < 9 or any(r is None for r in responses):
+                st.warning("Veuillez répondre à toutes les questions.")  
+            else:
+                # Calcul PHQ-9 et classification
+                score = sum(responses)
+                level, alert = classify_depression_level(score)
+                st.metric("Score PHQ-9", f"{score}/27", level)
+    
+                # Prédiction IA
+                demo = {
+                    'Age': age, 'Gender': gender, 'Education': education,
+                    'Employment': employment, 'Marital_Status': marital_status,
+                    'Income_Level': income_level, 'Family_History': family_history,
+                    'Previous_Treatment': previous_treatment
+                }
+                data = {**demo, **{f"PHQ{i}":responses[i-1] for i in range(1,10)}}
+                user_df = pd.DataFrame([data])
+                proba = best_pipeline.predict_proba(user_df)[0][1] * 100
+                pred = best_pipeline.predict(user_df)[0]
+                st.metric("Probabilité IA", f"{proba:.1f}%")
+                st.metric("Prédiction IA", "Dépression" if pred else "Pas de dépression")
+    
 
 
     with test_tabs[1]:

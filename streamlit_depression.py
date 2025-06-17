@@ -1166,28 +1166,33 @@ def show_home_page():
     # À qui s'adresse ce projet
     st.markdown("## 🎯 À qui s'adresse cet outil")
 
-    target_audiences = [
-        {
-            "title": "👥 Grand public",
-            "description": "Auto-évaluation et information sur la dépression pour sensibiliser et orienter",
-            "color": "#3498db"
-        },
-        {
-            "title": "⚕️ Professionnels de santé",
-            "description": "Outil d'aide au dépistage et suivi des patients en pratique clinique",
-            "color": "#27ae60"
-        },
-        {
-            "title": "🔬 Chercheurs",
-            "description": "Données et analyses pour études épidémiologiques sur la santé mentale",
-            "color": "#e74c3c"
-        },
-        {
-            "title": "🏛️ Décideurs",
-            "description": "Informations pour politiques de santé publique en santé mentale",
-            "color": "#9b59b6"
-        }
-    ]
+   target_audiences = [
+    {
+        "icon": "👥",
+        "title": "Grand public",
+        "description": "Auto-évaluation et information sur la dépression pour sensibiliser et orienter",
+        "color": "#3498db"
+    },
+    {
+        "icon": "⚕️",
+        "title": "Professionnels de santé",
+        "description": "Outil d'aide au dépistage et suivi des patients en pratique clinique",
+        "color": "#27ae60"
+    },
+    {
+        "icon": "🔬",
+        "title": "Chercheurs",
+        "description": "Données et analyses pour études épidémiologiques sur la santé mentale",
+        "color": "#e74c3c"
+    },
+    {
+        "icon": "🏛️",
+        "title": "Décideurs",
+        "description": "Informations pour politiques de santé publique en santé mentale",
+        "color": "#9b59b6"
+    }
+]
+
 
     for i in range(0, len(target_audiences), 2):
         col1, col2 = st.columns(2)

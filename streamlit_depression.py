@@ -1975,14 +1975,13 @@ def show_phq9_test():
 
     # Onglets du test
     test_tabs = st.tabs([
-        "👤 Informations Personnelles",
         "📋 Questionnaire PHQ-9",
         "🎯 Résultats et Prédiction",
         "📊 Analyse Personnalisée"
     ])
 
     with test_tabs[0]:
-        st.subheader("👤 Informations Personnelles")
+        st.subheader("📋 Questionnaire PHQ-9")
 
         st.markdown("""
         <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
@@ -2053,21 +2052,6 @@ def show_phq9_test():
             'Previous_Treatment': previous_treatment
         }
 
-        st.success("✅ Informations personnelles enregistrées")
-
-    with test_tabs[1]:
-        st.subheader("📋 Questionnaire PHQ-9")
-
-        st.markdown("""
-        <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
-            <h4 style="color: #e65100; margin-top: 0;">Instructions</h4>
-            <p style="margin: 0; color: #bf360c;">
-                Au cours des <strong>2 dernières semaines</strong>, à quelle fréquence avez-vous été dérangé(e)
-                par chacun des problèmes suivants ? Sélectionnez la réponse qui correspond le mieux à votre situation.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
         # Échelle de réponse
         response_scale = {
             0: "Jamais",
@@ -2104,24 +2088,31 @@ def show_phq9_test():
 
             st.markdown("---")
 
-        # Score actuel
-        current_score = sum(st.session_state.phq9_responses)
-        st.session_state.phq9_total = current_score
+        if submitted:
+            # Validation
+            responses = [st.session_state[f"phq{i}"] for i in range(1,10)]
+        if None in responses:
+            st.warning("Veuillez répondre à toutes les questions.")
+        else:
+            # Calcul score
+            score = sum(responses)
+            level, alert = classify_depression_level(score)
+            st.metric("Score PHQ-9", f"{score}/27", level)
+            
+            # Préparation données et prédiction IA
+            user_data = {
+                **{'Age': age, 'Gender': gender, …},
+                **{f"PHQ{i}": responses[i-1] for i in range(1,10)}
+            }
+            user_df = pd.DataFrame([user_data])
+            proba = best_pipeline.predict_proba(user_df)[0][1] * 100
+            pred = best_pipeline.predict(user_df)[0]
+            # Affichage IA
+            st.metric("Probabilité IA", f"{proba:.1f}%")
+            st.metric("Prédiction IA", "Dépression" if pred==1 else "Pas de dépression")
 
-        score_col1, score_col2, score_col3 = st.columns(3)
 
-        with score_col1:
-            st.metric("Score PHQ-9 Actuel", current_score, "/ 27 points")
-
-        with score_col2:
-            level, _ = classify_depression_level(current_score)
-            st.metric("Niveau Préliminaire", level)
-
-        with score_col3:
-            completion = len([r for r in st.session_state.phq9_responses if r > 0])
-            st.metric("Questions Complétées", f"{completion}/9")
-
-    with test_tabs[2]:
+    with test_tabs[1]:
         st.subheader("🎯 Résultats et Prédiction")
 
         # Vérification que le test est complété
@@ -2264,7 +2255,7 @@ def show_phq9_test():
             st.error(f"Erreur lors de la prédiction IA : {str(e)}")
             st.info("Le score PHQ-9 standard reste disponible pour l'évaluation.")
 
-    with test_tabs[3]:
+    with test_tabs[2]:
         st.subheader("📊 Analyse Personnalisée")
 
         if sum(st.session_state.phq9_responses) == 0:

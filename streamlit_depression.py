@@ -1936,7 +1936,17 @@ def show_ml_analysis():
         """, unsafe_allow_html=True)
 
 def show_phq9_test():
-    """Page de test PHQ-9 et prédiction"""
+    """Page de test PHQ-9 et prédiction IA"""
+
+    # --- Chargement des données et entraînement des modèles pour pouvoir prédire ---
+    df, _, _, _, _, _ = load_depression_datasets()
+    models_results, _, _ = train_depression_models(df)
+    if not models_results:
+        st.error("Erreur : impossible de charger ou d'entraîner les modèles de prédiction IA.")
+        return
+    # Sélection du meilleur modèle (basé sur le F1-score) et récupération de son pipeline
+    best_model_name = max(models_results.keys(), key=lambda x: models_results[x]['metrics']['f1'])
+    best_pipeline = models_results[best_model_name]['pipeline']
 
     # En-tête
     st.markdown("""
@@ -1953,23 +1963,9 @@ def show_phq9_test():
     </div>
     """, unsafe_allow_html=True)
 
-    # Information sur le test
-    st.markdown("""
-    <div style="background-color: #e8f4fd; padding: 20px; border-radius: 10px; margin-bottom: 30px;
-                border-left: 4px solid #6c5ce7;">
-        <h3 style="color: #2c3e50; margin-top: 0;">À propos du PHQ-9</h3>
-        <p style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 0; color: #34495e;">
-            Le PHQ-9 (Patient Health Questionnaire-9) est un outil standardisé et validé scientifiquement
-            pour évaluer la présence et la sévérité des symptômes dépressifs. Chaque question correspond
-            à un critère diagnostique de l'épisode dépressif majeur selon le DSM-5.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
     # Initialisation des variables de session
     if 'phq9_responses' not in st.session_state:
         st.session_state.phq9_responses = [0] * 9
-
     if 'demographic_data' not in st.session_state:
         st.session_state.demographic_data = {}
 
